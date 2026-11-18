@@ -121,6 +121,19 @@ fun MessageItem(
                 }
             }
 
+            if (
+                message.state == MessageState.STOPPED &&
+                message.content.isBlank() &&
+                message.reasoning.isBlank()
+            ) {
+                Text(
+                    text = "已停止",
+                    fontSize = 13.sp,
+                    color = colors.textSecondary,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                )
+            }
+
             if (message.state == MessageState.ERROR) {
                 Column(modifier = Modifier.padding(top = 6.dp)) {
                     Text(

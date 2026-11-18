@@ -79,15 +79,18 @@ object DsTheme {
  * 外观模式：0 跟随系统，1 浅色，2 深色。
  */
 @Composable
+fun isDarkThemeEnabled(appearance: Int): Boolean = when (appearance) {
+    1 -> false
+    2 -> true
+    else -> isSystemInDarkTheme()
+}
+
+@Composable
 fun MyDeepSeekTheme(
     appearance: Int = 0,
     content: @Composable () -> Unit,
 ) {
-    val dark = when (appearance) {
-        1 -> false
-        2 -> true
-        else -> isSystemInDarkTheme()
-    }
+    val dark = isDarkThemeEnabled(appearance)
     val colors = if (dark) DarkDsColors else LightDsColors
     val scheme = if (dark) {
         darkColorScheme(

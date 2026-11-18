@@ -1,6 +1,7 @@
 package com.greenctl.mydeepseek.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -80,14 +80,30 @@ fun ChatScreen(
         controller.events.collect { context.toast(it) }
     }
 
+    suspend fun jumpToLatest() {
+        if (messages.isEmpty()) return
+        runCatching {
+            listState.scrollToItem(messages.lastIndex)
+            listState.scrollBy(200_000f)
+        }
+    }
+
+    LaunchedEffect(controller.currentSessionId, messages.size) {
+        jumpToLatest()
+    }
+
     LaunchedEffect(
-        messages.size,
         messages.lastOrNull()?.content?.length,
         messages.lastOrNull()?.reasoning?.length,
     ) {
-        if (messages.isNotEmpty()) {
-            runCatching { listState.scrollToItem(messages.lastIndex) }
+        val info = listState.layoutInfo
+        val lastVisible = info.visibleItemsInfo.lastOrNull()
+        val distanceFromEnd = if (lastVisible == null) {
+            Int.MAX_VALUE
+        } else {
+            lastVisible.offset + lastVisible.size - info.viewportEndOffset + info.afterContentPadding
         }
+        if (distanceFromEnd <= 240) jumpToLatest()
     }
 
     ModalNavigationDrawer(
@@ -126,7 +142,7 @@ fun ChatScreen(
                 .imePadding(),
         ) {
             ChatTopBar(
-                title = controller.model.label,
+                title = if (controller.deepThink) "深度思考" else controller.model.label,
                 onMenu = { scope.launch { drawerState.open() } },
                 onTitleClick = { showModelSheet = true },
                 onNewChat = { controller.newChat() },
@@ -135,7 +151,7 @@ fun ChatScreen(
             Box(modifier = Modifier.weight(1f)) {
                 if (messages.isEmpty()) {
                     EmptyState(
-                        modelLabel = controller.model.label,
+                        modelLabel = if (controller.deepThink) "深度思考" else controller.model.label,
                         onSuggestion = { controller.updateDraft(it) },
                     )
                 } else {

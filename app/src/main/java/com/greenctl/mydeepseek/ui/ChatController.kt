@@ -1,7 +1,6 @@
 package com.greenctl.mydeepseek.ui
 
 import android.content.Context
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -35,9 +34,6 @@ class ChatController(context: Context) {
     private val api = DeepSeekApi()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-    @Immutable
-    data class UiEvent(val id: Long = System.nanoTime(), val text: String)
-
     var settings by mutableStateOf(repository.loadSettings())
         private set
     var sessions by mutableStateOf(repository.loadSessions())
@@ -54,6 +50,7 @@ class ChatController(context: Context) {
     val events = MutableSharedFlow<String>(extraBufferCapacity = 16)
 
     private var streamJob: Job? = null
+    private var stopRequested = false
 
     val model: DsModel get() = DsModel.of(settings.modelName)
     val deepThink: Boolean get() = settings.deepThink
@@ -95,7 +92,7 @@ class ChatController(context: Context) {
     fun renameSession(id: String, title: String) {
         val trimmed = title.trim()
         if (trimmed.isEmpty()) {
-            emit("文件名不能为空")
+            emit("对话名称不能为空")
             return
         }
         sessions = sessions.map { if (it.id == id) it.copy(title = trimmed) else it }
@@ -193,6 +190,7 @@ class ChatController(context: Context) {
     fun stopGeneration(silent: Boolean = false) {
         val job = streamJob
         streamJob = null
+        stopRequested = true
         api.cancel()
         job?.cancel()
         isGenerating = false
@@ -290,6 +288,7 @@ class ChatController(context: Context) {
 
     private fun startGeneration(sessionId: String, assistantId: String, extraContext: String) {
         isGenerating = true
+        stopRequested = false
         val turns = buildTurns(sessionId, assistantId, extraContext)
         val apiModel = if (model == DsModel.EXPERT || settings.deepThink) {
             DsModel.EXPERT.apiModel
@@ -343,7 +342,9 @@ class ChatController(context: Context) {
             } catch (e: CancellationException) {
                 publish(MessageState.STOPPED)
             } catch (e: Exception) {
-                if (content.isEmpty() && reasoning.isEmpty()) {
+                if (stopRequested) {
+                    publish(MessageState.STOPPED)
+                } else if (content.isEmpty() && reasoning.isEmpty()) {
                     updateMessage(sessionId, assistantId) {
                         it.copy(state = MessageState.ERROR, error = e.message ?: DeepSeekApi.ERR_SERVER)
                     }

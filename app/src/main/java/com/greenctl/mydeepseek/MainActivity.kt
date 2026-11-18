@@ -1,5 +1,6 @@
 package com.greenctl.mydeepseek
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -21,10 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import com.greenctl.mydeepseek.data.Attachment
 import com.greenctl.mydeepseek.data.MessageState
 import com.greenctl.mydeepseek.data.Role
@@ -32,8 +35,10 @@ import com.greenctl.mydeepseek.ui.ChatController
 import com.greenctl.mydeepseek.ui.components.toast
 import com.greenctl.mydeepseek.ui.screens.ChatScreen
 import com.greenctl.mydeepseek.ui.screens.SettingsScreen
+import androidx.core.view.WindowCompat
 import com.greenctl.mydeepseek.ui.theme.DsTheme
 import com.greenctl.mydeepseek.ui.theme.MyDeepSeekTheme
+import com.greenctl.mydeepseek.ui.theme.isDarkThemeEnabled
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +56,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             val controller = remember { ChatController(applicationContext) }
             var showSettings by remember { mutableStateOf(false) }
+            val darkTheme = isDarkThemeEnabled(controller.settings.appearance)
+            val view = LocalView.current
+
+            SideEffect {
+                val window = (view.context as? Activity)?.window ?: return@SideEffect
+                WindowCompat.getInsetsController(window, view).apply {
+                    isAppearanceLightStatusBars = !darkTheme
+                    isAppearanceLightNavigationBars = !darkTheme
+                }
+            }
 
             MyDeepSeekTheme(appearance = controller.settings.appearance) {
                 Surface(color = DsTheme.colors.background) {
