@@ -32,39 +32,45 @@ data class DsColors(
     val danger: Color,
 )
 
+/**
+ * 浅色：#FFFFFF 底 + #426EFE 主色，取自安装包 color/primary 与 splashscreenBackground。
+ */
 val LightDsColors = DsColors(
     background = Color(0xFFFFFFFF),
     surface = Color(0xFFFFFFFF),
-    elevated = Color(0xFFF6F7F9),
-    bubble = Color(0xFFF1F3F5),
-    textPrimary = Color(0xFF1B1C1F),
-    textSecondary = Color(0xFF8A8F99),
-    textTertiary = Color(0xFFB0B4BC),
-    divider = Color(0xFFEDEEF1),
+    elevated = Color(0xFFF5F6F7),
+    bubble = Color(0xFFF2F3F5),
+    textPrimary = Color(0xFF121417),
+    textSecondary = Color(0xFF8B9099),
+    textTertiary = Color(0xFFB4B8BE),
+    divider = Color(0xFFECECEE),
     accent = BrandBlue,
-    accentSoft = Color(0xFFEDF0FF),
+    accentSoft = Color(0xFFEDF1FF),
     accentOn = Color(0xFFFFFFFF),
-    codeBackground = Color(0xFFF6F7F9),
-    codeHeader = Color(0xFFEFF1F4),
-    codeText = Color(0xFF24292F),
+    codeBackground = Color(0xFFF7F8F9),
+    codeHeader = Color(0xFFEFF1F3),
+    codeText = Color(0xFF1F2328),
     danger = DangerRed,
 )
 
+/**
+ * 深色：底色 #0F0F0F、主色 #507BF2、卡片 #333333，均取自安装包资源。
+ */
 val DarkDsColors = DsColors(
-    background = Color(0xFF17181A),
-    surface = Color(0xFF1D1E21),
-    elevated = Color(0xFF26272B),
-    bubble = Color(0xFF26272B),
-    textPrimary = Color(0xFFE9EAEC),
-    textSecondary = Color(0xFF9AA0A6),
-    textTertiary = Color(0xFF6E747C),
-    divider = Color(0xFF2E3034),
-    accent = BrandBlue,
-    accentSoft = Color(0xFF252B47),
+    background = Color(0xFF0F0F0F),
+    surface = Color(0xFF171717),
+    elevated = Color(0xFF262626),
+    bubble = Color(0xFF262626),
+    textPrimary = Color(0xFFECECEC),
+    textSecondary = Color(0xFF9B9B9B),
+    textTertiary = Color(0xFF6E6E6E),
+    divider = Color(0xFF2C2C2C),
+    accent = BrandBlueDark,
+    accentSoft = Color(0xFF1D2740),
     accentOn = Color(0xFFFFFFFF),
-    codeBackground = Color(0xFF22242A),
-    codeHeader = Color(0xFF2A2D34),
-    codeText = Color(0xFFE9EAEC),
+    codeBackground = Color(0xFF1B1B1B),
+    codeHeader = Color(0xFF262626),
+    codeText = Color(0xFFE7E7E7),
     danger = DangerRed,
 )
 
@@ -94,9 +100,9 @@ fun MyDeepSeekTheme(
     val colors = if (dark) DarkDsColors else LightDsColors
     val scheme = if (dark) {
         darkColorScheme(
-            primary = BrandBlue,
+            primary = colors.accent,
             onPrimary = Color.White,
-            secondary = BrandBlue,
+            secondary = colors.accent,
             background = colors.background,
             onBackground = colors.textPrimary,
             surface = colors.surface,
@@ -108,9 +114,9 @@ fun MyDeepSeekTheme(
         )
     } else {
         lightColorScheme(
-            primary = BrandBlue,
+            primary = colors.accent,
             onPrimary = Color.White,
-            secondary = BrandBlue,
+            secondary = colors.accent,
             background = colors.background,
             onBackground = colors.textPrimary,
             surface = colors.surface,

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.greenctl.mydeepseek.R
 import com.greenctl.mydeepseek.ui.theme.DsTheme
 
 @Composable
@@ -78,14 +81,14 @@ fun AssistantAvatar(size: Dp = 28.dp) {
         modifier = Modifier
             .size(size)
             .clip(CircleShape)
-            .background(colors.accent),
+            .background(colors.accentSoft),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = "D",
-            color = Color.White,
-            fontSize = (size.value * 0.5f).sp,
-            fontWeight = FontWeight.Bold,
+        Icon(
+            painter = painterResource(R.drawable.ic_deepseek_logo),
+            contentDescription = null,
+            tint = colors.accent,
+            modifier = Modifier.size(size * 0.74f),
         )
     }
 }
