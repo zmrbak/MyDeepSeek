@@ -11,8 +11,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -67,7 +69,7 @@ fun MessageItem(
         ) {
             Surface(
                 color = colors.bubble,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(14.dp),
                 modifier = Modifier.widthIn(max = maxWidth),
             ) {
                 Text(
@@ -75,21 +77,19 @@ fun MessageItem(
                     fontSize = bodySize,
                     lineHeight = bodyLine,
                     color = colors.textPrimary,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
                 )
             }
         }
         return
     }
 
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 10.dp),
     ) {
-        AssistantAvatar(size = 26.dp)
-        Spacer(Modifier.width(10.dp))
-        Column(modifier = Modifier.weight(1f)) {
+        run {
             when (message.search) {
                 SearchState.SEARCHING -> ToolRow(text = "正在搜索", animated = true)
                 SearchState.UNAVAILABLE -> ToolRow(text = "联网搜索暂不可用")
@@ -202,15 +202,12 @@ private fun SmallAction(
 private fun ToolRow(text: String, animated: Boolean = false) {
     val colors = DsTheme.colors
     Row(
-        modifier = Modifier
-            .padding(bottom = 8.dp)
-            .background(colors.elevated, RoundedCornerShape(8.dp))
-            .padding(horizontal = 10.dp, vertical = 5.dp),
+        modifier = Modifier.padding(bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DsIcon(DsIconType.Globe, colors.textSecondary, size = 14.dp, strokeWidth = 1.5.dp)
+        DsIcon(DsIconType.Globe, colors.textTertiary, size = 14.dp)
         Spacer(Modifier.width(6.dp))
-        Text(text = text, fontSize = 12.sp, color = colors.textSecondary)
+        Text(text = text, fontSize = 13.sp, color = colors.textTertiary)
         if (animated) {
             Spacer(Modifier.width(6.dp))
             TypingDots(color = colors.textTertiary)
@@ -239,32 +236,23 @@ private fun ThinkingBlock(
         else -> "已深度思考"
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(colors.elevated, RoundedCornerShape(12.dp))
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickableNoRipple { expanded = !expanded },
+                .clickableNoRipple { expanded = !expanded }
+                .padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            DsIcon(DsIconType.Bulb, colors.textSecondary, size = 15.dp, strokeWidth = 1.6.dp)
-            Spacer(Modifier.width(6.dp))
             Text(
                 text = header,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
                 color = colors.textSecondary,
-                modifier = Modifier.weight(1f),
             )
+            Spacer(Modifier.width(4.dp))
             DsIcon(
                 type = DsIconType.ChevronDown,
                 tint = colors.textSecondary,
-                size = 16.dp,
-                strokeWidth = 1.6.dp,
+                size = 15.dp,
                 modifier = Modifier.rotate(rotation),
             )
         }
@@ -273,13 +261,25 @@ private fun ThinkingBlock(
             enter = expandVertically() + fadeIn(),
             exit = shrinkVertically() + fadeOut(),
         ) {
-            Text(
-                text = reasoning,
-                fontSize = (13f * textScale).sp,
-                lineHeight = (21f * textScale).sp,
-                color = colors.textSecondary,
-                modifier = Modifier.padding(top = 8.dp),
-            )
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .padding(bottom = 6.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(2.dp)
+                        .fillMaxHeight()
+                        .background(colors.divider, RoundedCornerShape(1.dp)),
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = reasoning,
+                    fontSize = (14f * textScale).sp,
+                    lineHeight = (22f * textScale).sp,
+                    color = colors.textSecondary,
+                )
+            }
         }
     }
 }

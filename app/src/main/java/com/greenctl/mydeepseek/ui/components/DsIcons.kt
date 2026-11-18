@@ -1,5 +1,6 @@
 package com.greenctl.mydeepseek.ui.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -26,10 +27,13 @@ import androidx.compose.material.icons.outlined.Stop
 import androidx.compose.material.icons.outlined.ThumbDown
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material.icons.outlined.VolumeUp
+import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -80,6 +84,24 @@ fun DsIcon(
     )
 }
 
+/**
+ * 官方客户端的两横线菜单图标：上长下短，左对齐。
+ */
+@Composable
+fun DsMenuIcon(
+    tint: Color,
+    modifier: Modifier = Modifier,
+    size: Dp = 20.dp,
+) {
+    Canvas(modifier.size(size)) {
+        val stroke = 1.8.dp.toPx()
+        val y1 = this.size.height * 0.32f
+        val y2 = this.size.height * 0.72f
+        drawLine(tint, Offset(0f, y1), Offset(this.size.width, y1), stroke, StrokeCap.Round)
+        drawLine(tint, Offset(0f, y2), Offset(this.size.width * 0.56f, y2), stroke, StrokeCap.Round)
+    }
+}
+
 private val DsIconType.vector: ImageVector
     get() = when (this) {
         DsIconType.Menu -> Icons.Outlined.Menu
@@ -95,7 +117,7 @@ private val DsIconType.vector: ImageVector
         DsIconType.Bulb -> Icons.Outlined.Psychology
         DsIconType.Globe -> Icons.Outlined.Language
         DsIconType.Attach -> Icons.Outlined.AttachFile
-        DsIconType.Mic -> Icons.Outlined.Mic
+        DsIconType.Mic -> Icons.Outlined.GraphicEq
         DsIconType.Pin -> Icons.Outlined.PushPin
         DsIconType.Trash -> Icons.Outlined.Delete
         DsIconType.Edit -> Icons.Outlined.EditNote

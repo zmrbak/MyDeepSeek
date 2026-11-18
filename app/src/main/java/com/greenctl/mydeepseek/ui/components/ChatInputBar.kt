@@ -2,6 +2,7 @@ package com.greenctl.mydeepseek.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,12 +31,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.greenctl.mydeepseek.data.Attachment
 import com.greenctl.mydeepseek.ui.theme.DsTheme
 
+/**
+ * 悬浮式输入卡片：白底、1dp 描边、18dp 圆角，底部两个描边胶囊 + 加号 + 语音/发送。
+ */
 @Composable
 fun ChatInputBar(
     draft: String,
@@ -51,57 +59,56 @@ fun ChatInputBar(
     modifier: Modifier = Modifier,
 ) {
     val colors = DsTheme.colors
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(colors.background)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-    ) {
-        if (attachments.isNotEmpty()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        Surface(
+            color = colors.surface,
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(1.dp, colors.divider),
+            shadowElevation = 6.dp,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(
+                modifier = Modifier.padding(start = 14.dp, end = 10.dp, top = 12.dp, bottom = 9.dp),
             ) {
-                attachments.forEachIndexed { index, attachment ->
+                if (attachments.isNotEmpty()) {
                     Row(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(colors.elevated)
-                            .padding(start = 10.dp, end = 4.dp, top = 6.dp, bottom = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                            .padding(bottom = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Text(
-                            text = attachment.name,
-                            fontSize = 12.sp,
-                            color = colors.textPrimary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.width(140.dp),
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickableNoRipple { onRemoveAttachment(index) },
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            DsIcon(DsIconType.Close, colors.textSecondary, size = 12.dp, strokeWidth = 1.6.dp)
+                        attachments.forEachIndexed { index, attachment ->
+                            Row(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .border(1.dp, colors.divider, RoundedCornerShape(10.dp))
+                                    .padding(start = 10.dp, end = 4.dp, top = 6.dp, bottom = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = attachment.name,
+                                    fontSize = 12.sp,
+                                    color = colors.textPrimary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.width(140.dp),
+                                )
+                                Spacer(Modifier.width(4.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickableNoRipple { onRemoveAttachment(index) },
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    DsIcon(DsIconType.Close, colors.textTertiary, size = 12.dp)
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
 
-        Surface(
-            color = colors.surface,
-            shape = RoundedCornerShape(22.dp),
-            border = BorderStroke(1.dp, colors.divider),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Column(modifier = Modifier.padding(start = 14.dp, end = 8.dp, top = 10.dp, bottom = 8.dp)) {
                 BasicTextField(
                     value = draft,
                     onValueChange = onDraftChange,
@@ -114,13 +121,13 @@ fun ChatInputBar(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 24.dp, max = 160.dp)
-                        .padding(end = 6.dp),
+                        .padding(end = 4.dp),
                     maxLines = 8,
                     decorationBox = { innerTextField ->
                         Box {
                             if (draft.isEmpty()) {
                                 Text(
-                                    text = "发消息",
+                                    text = "发消息或按住说话",
                                     fontSize = (16f * textScale).sp,
                                     color = colors.textTertiary,
                                 )
@@ -130,7 +137,7 @@ fun ChatInputBar(
                     },
                 )
 
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     TogglePill(
@@ -149,41 +156,51 @@ fun ChatInputBar(
                     Spacer(Modifier.weight(1f))
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(30.dp)
                             .clip(CircleShape)
                             .clickableNoRipple(onClick = onAttach),
                         contentAlignment = Alignment.Center,
                     ) {
-                        DsIcon(DsIconType.Attach, colors.textSecondary, size = 19.dp, strokeWidth = 1.6.dp)
+                        Icon(
+                            imageVector = Icons.Outlined.AddCircleOutline,
+                            contentDescription = null,
+                            tint = colors.textPrimary,
+                            modifier = Modifier.size(23.dp),
+                        )
                     }
                     Spacer(Modifier.width(6.dp))
-                    if (isGenerating) {
-                        Box(
+
+                    when {
+                        isGenerating -> Box(
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(30.dp)
                                 .clip(CircleShape)
-                                .background(colors.elevated)
+                                .border(1.dp, colors.divider, CircleShape)
                                 .clickableNoRipple(onClick = onStop),
                             contentAlignment = Alignment.Center,
                         ) {
-                            DsIcon(DsIconType.Stop, colors.textPrimary, size = 14.dp)
+                            DsIcon(DsIconType.Stop, colors.textPrimary, size = 13.dp)
                         }
-                    } else {
-                        val canSend = draft.isNotBlank()
-                        Box(
+
+                        draft.isNotBlank() || attachments.isNotEmpty() -> Box(
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(30.dp)
                                 .clip(CircleShape)
-                                .background(if (canSend) colors.accent else colors.elevated)
-                                .clickableNoRipple(enabled = canSend, onClick = onSend),
+                                .background(colors.accent)
+                                .clickableNoRipple(onClick = onSend),
                             contentAlignment = Alignment.Center,
                         ) {
-                            DsIcon(
-                                type = DsIconType.Send,
-                                tint = if (canSend) Color.White else colors.textTertiary,
-                                size = 17.dp,
-                                strokeWidth = 2.dp,
-                            )
+                            DsIcon(DsIconType.Send, Color.White, size = 16.dp)
+                        }
+
+                        else -> Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(CircleShape)
+                                .clickableNoRipple(onClick = { }),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            DsIcon(DsIconType.Mic, colors.textPrimary, size = 22.dp)
                         }
                     }
                 }
@@ -196,8 +213,8 @@ fun ChatInputBar(
             color = colors.textTertiary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 6.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                .padding(top = 7.dp),
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -210,25 +227,26 @@ private fun TogglePill(
     onClick: () -> Unit,
 ) {
     val colors = DsTheme.colors
+    val shape = RoundedCornerShape(50)
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(50))
-            .background(if (active) colors.accentSoft else colors.elevated)
+            .clip(shape)
+            .background(if (active) colors.accentSoft else Color.Transparent)
+            .border(1.dp, if (active) colors.accentBorder else colors.divider, shape)
             .clickableNoRipple(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .padding(horizontal = 10.dp, vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         DsIcon(
             type = type,
-            tint = if (active) colors.accent else colors.textSecondary,
-            size = 14.dp,
-            strokeWidth = 1.6.dp,
+            tint = if (active) colors.accent else colors.textPrimary,
+            size = 13.dp,
         )
-        Spacer(Modifier.width(4.dp))
+        Spacer(Modifier.width(5.dp))
         Text(
             text = label,
             fontSize = 12.sp,
-            color = if (active) colors.accent else colors.textSecondary,
+            color = if (active) colors.accent else colors.textPrimary,
         )
     }
 }

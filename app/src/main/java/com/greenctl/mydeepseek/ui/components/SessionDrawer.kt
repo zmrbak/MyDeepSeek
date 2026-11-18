@@ -50,7 +50,9 @@ fun SessionDrawer(
     onDeleteSession: (ChatSession) -> Unit,
     onRenameSession: (ChatSession, String) -> Unit,
     onTogglePin: (ChatSession) -> Unit,
+    onOpenModelSheet: () -> Unit,
     onOpenSettings: () -> Unit,
+    modelLabel: String = "快速模式",
     modifier: Modifier = Modifier,
 ) {
     val colors = DsTheme.colors
@@ -182,6 +184,20 @@ fun SessionDrawer(
             }
         }
 
+        Divider(color = colors.divider)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickableNoRipple(onClick = onOpenModelSheet)
+                .padding(vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            DsIcon(DsIconType.Bulb, colors.textSecondary, size = 18.dp)
+            Spacer(Modifier.width(8.dp))
+            Text(text = modelLabel, fontSize = 14.sp, color = colors.textPrimary)
+            Spacer(Modifier.weight(1f))
+            DsIcon(DsIconType.ChevronRight, colors.textTertiary, size = 16.dp)
+        }
         Divider(color = colors.divider)
         Row(
             modifier = Modifier

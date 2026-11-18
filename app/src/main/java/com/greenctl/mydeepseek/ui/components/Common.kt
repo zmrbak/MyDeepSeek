@@ -75,25 +75,6 @@ fun DsIconButton(
 }
 
 @Composable
-fun AssistantAvatar(size: Dp = 28.dp) {
-    val colors = DsTheme.colors
-    Box(
-        modifier = Modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(colors.accentSoft),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_deepseek_logo),
-            contentDescription = null,
-            tint = colors.accent,
-            modifier = Modifier.size(size * 0.74f),
-        )
-    }
-}
-
-@Composable
 fun TypingDots(color: Color = DsTheme.colors.textSecondary) {
     val transition = rememberInfiniteTransition(label = "typing")
     val base = transition.animateFloat(

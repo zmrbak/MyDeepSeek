@@ -25,6 +25,7 @@ data class DsColors(
     val divider: Color,
     val accent: Color,
     val accentSoft: Color,
+    val accentBorder: Color,
     val accentOn: Color,
     val codeBackground: Color,
     val codeHeader: Color,
@@ -33,43 +34,46 @@ data class DsColors(
 )
 
 /**
- * 浅色：#FFFFFF 底 + #426EFE 主色，取自安装包 color/primary 与 splashscreenBackground。
+ * 浅色：官方设计令牌（neutral-bluish / deepseek 色阶）。
+ * 气泡 #EDF3FE、正文 #0F1115、主色 #426EFE 均由官方截图与安装包资源采样得到。
  */
 val LightDsColors = DsColors(
     background = Color(0xFFFFFFFF),
     surface = Color(0xFFFFFFFF),
     elevated = Color(0xFFF5F6F7),
-    bubble = Color(0xFFF2F3F5),
-    textPrimary = Color(0xFF121417),
-    textSecondary = Color(0xFF8B9099),
-    textTertiary = Color(0xFFB4B8BE),
-    divider = Color(0xFFECECEE),
+    bubble = Color(0xFFEDF3FE),
+    textPrimary = Color(0xFF0F1115),
+    textSecondary = Color(0xFF61666B),
+    textTertiary = Color(0xFFA2A4A6),
+    divider = Color(0xFFEBEEF2),
     accent = BrandBlue,
-    accentSoft = Color(0xFFEDF1FF),
+    accentSoft = Color(0xFFEDF3FE),
+    accentBorder = Color(0xFFD3E2FF),
     accentOn = Color(0xFFFFFFFF),
-    codeBackground = Color(0xFFF7F8F9),
-    codeHeader = Color(0xFFEFF1F3),
-    codeText = Color(0xFF1F2328),
+    codeBackground = Color(0xFFF9FAFB),
+    codeHeader = Color(0xFFF5F6F7),
+    codeText = Color(0xFF0F1115),
     danger = DangerRed,
 )
 
 /**
- * 深色：底色 #0F0F0F、主色 #507BF2、卡片 #333333，均取自安装包资源。
+ * 深色：底色 #0F0F0F、主色 #507BF2（安装包资源），层色取自官方深色令牌。
  */
 val DarkDsColors = DsColors(
     background = Color(0xFF0F0F0F),
-    surface = Color(0xFF171717),
-    elevated = Color(0xFF262626),
-    bubble = Color(0xFF262626),
-    textPrimary = Color(0xFFECECEC),
-    textSecondary = Color(0xFF9B9B9B),
-    textTertiary = Color(0xFF6E6E6E),
-    divider = Color(0xFF2C2C2C),
+    surface = Color(0xFF1B1B1C),
+    elevated = Color(0xFF2C2C2E),
+    bubble = Color(0xFF283142),
+    textPrimary = Color(0xFFF9FAFB),
+    textSecondary = Color(0xFFCFD3D6),
+    textTertiary = Color(0xFFADB2B8),
+    divider = Color(0xFF2A2A2B),
     accent = BrandBlueDark,
-    accentSoft = Color(0xFF1D2740),
+    accentSoft = Color(0xFF283142),
+    accentBorder = Color(0xFF34415B),
     accentOn = Color(0xFFFFFFFF),
-    codeBackground = Color(0xFF1B1B1B),
-    codeHeader = Color(0xFF262626),
+    codeBackground = Color(0xFF1B1B1C),
+    codeHeader = Color(0xFF2C2C2E),
     codeText = Color(0xFFE7E7E7),
     danger = DangerRed,
 )
